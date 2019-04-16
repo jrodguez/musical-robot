@@ -15,6 +15,7 @@ install:
 
 script:
 - py.test --pyargs musical-robot --cov-report term-missing --cov=musical-robot
+#-tox
 - coverage report
 
 after_success:

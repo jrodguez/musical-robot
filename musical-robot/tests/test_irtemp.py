@@ -7,3 +7,4 @@ import irtemp
 def test_centikelvin_to_celcius():
     cels = irtemp.centikelvin_to_celsius(100000)
     assert isinstance(cels, float),'Output is not a float'
+  

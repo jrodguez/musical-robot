@@ -61,9 +61,9 @@ def image_read(image):
 def name(frames, factor):
     '''Loops through all frames in the video clip to portion out chosen frames'''
     chosenframes = []
-    frame = 0
+    frame = 0 
     #the frame rate for a Letpton FLRS camera is 27 fps.
-    while frame <= frames:
+    while frame <= frames - 1:
         if frame % factor == 0:
             chosenframes.append(frame)
             frame = frame + 1

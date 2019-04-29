@@ -1,17 +1,21 @@
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import irtemp
 
 import pandas as pd
 import numpy as np
 from skimage import io
 
-__
-# Function:
-# Step:
-# Input:
-# Output:
-def name(input):
-    '''Doc String'''
-    return output
-__
+# __
+# # # Function:
+# # Step:
+# # Input:
+# # Output:
+# def name(input):
+#     '''Doc String'''
+#     return output
+# __
 
 
 # Function 1: Converts the raw centikelvin reading to Celcius
@@ -61,7 +65,7 @@ def image_read(image):
 def frame_loop(frames, factor):
     '''Loops through all frames in the video clip to portion out chosen frames'''
     chosenframes = []
-    frame = 0 
+    frame = 0
     #the frame rate for a Letpton FLRS camera is 27 fps.
     while frame <= frames - 1:
         if frame % factor == 0:
@@ -93,7 +97,7 @@ def time_index(chosenframes):
 # Step: input all of the output data sets, concatenate
 # Input: chosen frames, times, temperatures (celcius and fahrenheit)
 # Output: data frame of all data sets
-def dataframe_create():
+def dataframe_create(chosenframes, alltime, alltempc, alltempf):
     '''Create a data frame of all of the inputted data sets'''
     data = pd.DataFrame()
     data['Frame'] = chosenframes
@@ -103,13 +107,13 @@ def dataframe_create():
     return data
 
 # Function: Reads the temperature for every point in the frame and creates array
-# Step: 
+# Step:set constants, iterate over columns and rows reading all tempertures
 # Input:single frame of image
-# Output:
+# Output: temperatures at every point in array
 def all_temp_single_frame(image):
     '''Reads all temperatures in a single frame'''
-    frames, height, width = image_read(image)
-    alltempall = np.zeros((height, width))
+    frames, height, width = irtemp.image_read(image)
+    alltempall = np.zeros((height, width), dtype = float)
     row = 0
     col = 0
 
@@ -117,8 +121,29 @@ def all_temp_single_frame(image):
         row = 0
         while row < width:
             temp = image[col, row]
-            cels, fahr = to_temperature(temp)
+            cels = irtemp.centikelvin_to_celsius(temp)
             alltempall[col, row] = cels
             row += 1
-            col += 1
+        col += 1
     return alltempall
+
+# Function: finds a single temperature at a specifc point over all frames
+# Step:set arrays, index the frames wanted, iterate over frames, determine temp at points
+# Input: the frames that you want, the col and row desired, and full image
+# Output: lists of the temperatures in celcius and fahrenheit
+def single_temp_all_frame(chosenframes, col, row, image):
+    '''Finds a single temperature over all chosen frames'''
+    maxlength = len(chosenframes)
+    alltempc = []
+    alltempf = []
+    index = 0
+
+    while index < maxlength:
+        frame = chosenframes[index]
+        framearray = image[frame]
+        temp = framearray[col,row]
+        cels, fahr = to_temperature(temp)
+        alltempc.append(cels)
+        alltempf.append(fahr)
+        index = index + 1
+    return alltempc, alltempf

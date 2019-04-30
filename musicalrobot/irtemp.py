@@ -3,9 +3,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import irtemp
 
+import skimage
+import numpy as np
+import cv2 as cv
 import pandas as pd
 import numpy as np
+
 from skimage import io
+from skimage.filters import gaussian
+from skimage.filters import sobel, prewitt, scharr
+from scipy.ndimage.morphology import binary_fill_holes
+from skimage.measure import label
+from skimage.measure import regionprops
+
 
 # __
 # # # Function:
@@ -147,3 +157,78 @@ def single_temp_all_frame(chosenframes, col, row, image):
         alltempf.append(fahr)
         index = index + 1
     return alltempc, alltempf
+
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+                                                #######Image Processing Functions#########
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+
+def edge_detection(image_name, colorscale):
+    '''Detects the edges in the image
+    Args:
+        image_name(string): File name of the image to be processed
+        colorscale(int): 0 for grayscale and 1 for original color
+        
+    Returns:
+        edges(Numpy array): Image with detected egdes
+    '''
+    image = cv.imread(image_name,colorscale)
+    gaus = gaussian(image, sigma=2)
+    sob = sobel(gaussian(image, sigma=2))
+    edges = sobel(gaussian(image, sigma=2)) > 0.03
+    return edges
+
+def fill_label_holes(edge_image):
+    '''
+    This function takes the image with detected egdes as the
+    input and returns an image with filled and labeled wellplates.
+    
+    Args:
+        edge_image(Numpy array): Image with detected egdes
+        
+    Returns:
+        labeled_wells(Numpy array): Image with filled and labeled wells
+        which can be used to determine the properties of the well.
+    '''
+    filled_wells = binary_fill_holes(edge_image)
+    labeled_wells = label(filled_wells)
+    return labeled_wells
+
+def image_properties(labeled_wells, image_name, colorscale):
+    '''
+    This function takes the image with filled and labeled holes and original
+    image as the input and returns the properties and returns the properties
+    of all the wells in a single frame.
+    
+    Args:
+        labeled_wells(Numpy Array): Image with filled and labeled wells
+        which can be used to determine the properties of the well.
+        image_name(string): File name of the image to be processed
+        colorscale(int): 0 for grayscale and 1 for original color
+        
+    Returns:
+        regprops(dataframe): A dataframe containing the properties of
+        all the wells in a single frame.
+    '''
+    image = cv.imread(image_name,colorscale)
+    props = regionprops(labeled_wells, intensity_image=image)
+    x = np.zeros(len(props))
+    y = np.zeros(len(props))
+    area = np.zeros(len(props))
+    perim = np.zeros(len(props))
+    intensity = np.zeros(len(props))
+
+    counter = 0
+    for prop in props:
+        x[counter] = prop.centroid[0]
+        y[counter] = prop.centroid[1]
+        area[counter] = prop.area
+        perim[counter] = prop.perimeter
+        intensity[counter] = prop.mean_intensity
+    
+        counter += 1
+
+    regprops = pd.DataFrame({'X': x, 'Y': y, 'Area': area,
+                            'Perim': perim, 'Mean Intensity': intensity})
+    return regprops

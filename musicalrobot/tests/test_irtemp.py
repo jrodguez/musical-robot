@@ -40,7 +40,7 @@ def test_to_temperature():
 def test_image_read():
     '''Test: Reads the image data and saves the values to variables.'''
     #inputs
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     #running functionS
     frames, height, width = irtemp.image_read(image)
     #asserts
@@ -53,7 +53,7 @@ def test_image_read():
 def test_frame_loop():
     '''Test: Loops through all frames in the video clip to portion out chosen frames'''
     #inputs
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     frames, height, width = irtemp.image_read(image)
     factor = 27 #defined by number of frames desired
     #running function
@@ -65,7 +65,7 @@ def test_frame_loop():
 def test_time_index():
     '''Test: Creates an index of time with the specific chosen chosenframes'''
     #inputs
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     frames, height, width = irtemp.image_read(image)
     factor = 27
     chosenframes = irtemp.frame_loop(frames, factor)
@@ -82,7 +82,7 @@ def test_dataframe_create():
     col = 5
     row = 5
 
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     frames, height, width = irtemp.image_read(image)
     chosenframes = irtemp.frame_loop(frames, factor)
     alltime = irtemp.time_index(chosenframes)
@@ -101,7 +101,7 @@ def test_dataframe_create():
 def test_all_temp_single_frame():
     '''Test: Reads all temperatures in a single frame'''
     #inputs
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     #running function
     alltempall = irtemp.all_temp_single_frame(image)
     #asserts
@@ -115,7 +115,7 @@ def test_single_temp_all_frame():
     col = 5
     row = 5
 
-    image = io.imread('../../doc/Lepton_Capture.tiff')
+    image = io.imread('../doc/Lepton_Capture.tiff')
     frames, height, width = irtemp.image_read(image)
     chosenframes = irtemp.frame_loop(frames, factor)
     #running function
@@ -123,4 +123,33 @@ def test_single_temp_all_frame():
     #asserts
     assert isinstance(alltempc, list), "Output is not a list"
     assert isinstance(alltempf, list), "Output is not a list"
+    return
+
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+                                                #######Test functions for Image Processing #########
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+
+def test_edge_detection():
+    ''' Test for function which detects edges in an image grame'''
+    edge_image = irtemp.edge_detection('../doc/wellplate.png',0)
+    assert isinstance(edge_image, np.ndarray),'Output is not an array'
+    return
+
+def test_fill_label_holes():
+    '''Test for function which fills and labels the image with 
+       detected edges'''
+    edge_image = irtemp.edge_detection('../doc/wellplate.png',0)
+    labeled_wells = irtemp.fill_label_holes(edge_image)
+    assert isinstance(labeled_wells, np.ndarray),'Output is not an array'
+    return
+
+def test_image_properties():
+    ''' Test for function which determines the properties of the 
+    wellplate frame'''
+    edge_image = irtemp.edge_detection('../doc/wellplate.png',0)
+    labeled_wells = irtemp.fill_label_holes(edge_image)
+    regprops = irtemp.image_properties(labeled_wells,'../doc/wellplate.png',0)
+    assert isinstance(regprops, pd.DataFrame),'Output is not a dataframe'
     return

@@ -164,16 +164,16 @@ def single_temp_all_frame(chosenframes, col, row, image):
 ##########################################################################################################################################################################
 ##########################################################################################################################################################################
 
-def edge_detection(image_name, colorscale):
+def edge_detection(image, colorscale):
     '''Detects the edges in the image
     Args:
-        image_name(string): File name of the image to be processed
+        image(Numpy array): The image array to be processed.
         colorscale(int): 0 for grayscale and 1 for original color
         
     Returns:
         edges(Numpy array): Image with detected egdes
     '''
-    image = cv.imread(image_name,colorscale)
+    # image = cv.imread(image_name,colorscale)
     gaus = gaussian(image, sigma=2)
     sob = sobel(gaussian(image, sigma=2))
     edges = sobel(gaussian(image, sigma=2)) > 0.03

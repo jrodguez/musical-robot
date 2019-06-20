@@ -64,7 +64,7 @@ def test_input_file():
 def test_flip_frame():
     '''Test for function which flips the frames horizontally
        and vertically to correct for the mirroring during recording.'''
-    file_name = ('../../doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../doc/PPA_Melting_6_14_19.tiff')
     frames = irtemp.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -75,7 +75,7 @@ def test_flip_frame():
 
 def test_edge_detection():
     ''' Test for function which detects edges,fills and labels the samples'''
-    file_name = ('../../doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../doc/PPA_Melting_6_14_19.tiff')
     frames = irtemp.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -89,7 +89,7 @@ def test_edge_detection():
 def test_regprop():
     '''Test for function which determines centroids of all the samples
     and locations on the plate to obtain temperature from'''
-    file_name = ('../../doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../doc/PPA_Melting_6_14_19.tiff')
     frames = irtemp.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -106,7 +106,7 @@ def test_regprop():
 
 def test_sample_temp():
     '''Test for function which obtaines temperature of samples and plate temperature'''
-    file_name = ('../../doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../doc/PPA_Melting_6_14_19.tiff')
     frames = irtemp.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -126,7 +126,7 @@ def test_sample_temp():
 
 def test_image_eq():
     ''' Test for fucntion which equalizes a low contrast image'''
-    pixel_frames = irtemp.input_file('../../doc/CHCl_CA_DES_5_31_19.tiff')
+    pixel_frames = irtemp.input_file('../doc/CHCl_CA_DES_5_31_19.tiff')
     n_frames = len(pixel_frames)
     img_eq = irtemp.image_eq(n_frames,pixel_frames)
     assert isinstance(img_eq,np.ndarray),'Output is not an array'
@@ -135,7 +135,7 @@ def test_image_eq():
 
 def test_pixel_sum():
     '''Test for function which obtains the sum of pixels over all rows and columns'''
-    pixel_frames = irtemp.input_file('../../doc/CHCl_CA_DES_5_31_19.tiff')
+    pixel_frames = irtemp.input_file('../doc/CHCl_CA_DES_5_31_19.tiff')
     n_frames = len(pixel_frames)
     img_eq = irtemp.image_eq(n_frames,pixel_frames)
     column_sum, row_sum = irtemp.pixel_sum(img_eq)
@@ -148,7 +148,7 @@ def test_pixel_sum():
 def test_peak_values():
     '''Test for function which finds peaks from the column_sum and row_sum arrays
         and return a dataframe with sample locations and plate locations.'''
-    pixel_frames = irtemp.input_file('../../doc/CHCl_CA_DES_5_31_19.tiff')
+    pixel_frames = irtemp.input_file('../doc/CHCl_CA_DES_5_31_19.tiff')
     n_frames = len(pixel_frames)
     img_eq = irtemp.image_eq(n_frames,pixel_frames)
     column_sum, row_sum = irtemp.pixel_sum(img_eq)
@@ -161,7 +161,7 @@ def test_peak_values():
 
 def test_pixel_intensity():
     '''Test for function which determines sample temperature and plate temperature'''
-    pixel_frames = irtemp.input_file('../../doc/CHCl_CA_DES_5_31_19.tiff')
+    pixel_frames = irtemp.input_file('../doc/CHCl_CA_DES_5_31_19.tiff')
     n_frames = len(pixel_frames)
     img_eq = irtemp.image_eq(n_frames,pixel_frames)
     column_sum, row_sum = irtemp.pixel_sum(img_eq)

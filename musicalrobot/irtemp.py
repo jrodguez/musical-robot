@@ -5,7 +5,6 @@ import irtemp
 
 import skimage
 import numpy as np
-import cv2 as cv
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

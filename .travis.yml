@@ -14,7 +14,7 @@ install:
 - travis_retry pip install -r requirements.txt
 
 script:
-- py.test --pyargs musical-robot --cov-report term-missing --cov=musical-robot
+- py.test --pyargs musicalrobot --cov-report term-missing --cov=musicalrobot
 #-tox
 - coverage report
 

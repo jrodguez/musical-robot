@@ -8,12 +8,6 @@ env:
 python:
   - '3.6'
 
-before_install:
-- brew install git-lfs
-
-before_script:
-- git lfs pull
-
 install:
 - pip install -U tox-travis coverage coveralls
 - travis_retry pip install $PIP_DEPS

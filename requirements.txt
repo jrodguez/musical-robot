@@ -7,3 +7,6 @@ py==1.8.0
 scikit-image==0.15.0
 scikit-learn==0.20.3
 scipy==1.2.1
+pytest-cov==2.7.1
+pytest==4.4.0
+coverage==4.5.3

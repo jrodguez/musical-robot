@@ -166,6 +166,33 @@ def sample_temp(regprops,frames):
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
 
+#### Wrapping function ######
+def centroid_temp(frames,n_samples):
+    ''' Function to obtain sample temperature and plate temperature
+        in every frame of the video using edge detection.
+    Args:
+        frames(List): An list containing an array for each frame
+        in the video or just a single array in case of an image.
+        n_samples: Number of samples in the video
+    Returns:
+        s_temp(List): A list containing a list a temperatures for each sample
+        in every frame of the video 
+        plate_temp(List): A list containing a list a temperatures for each plate
+        location in every frame of the video.
+    '''
+    # Use the function 'flip_frame' to flip the frames horizontally 
+    #and vertically to correct for the mirroring during recording
+    flip_frames = flip_frame(frames)
+    # Use the function 'edge_detection' to detect edges, fill and 
+    # label the samples.
+    labeled_samples = edge_detection(flip_frames)
+    # Use the function 'regprop' to determine centroids of all the samples
+    regprops = regprop(labeled_samples,flip_frames,n_samples)
+    # Use the function 'sample_temp' to obtain temperature of samples 
+    # and plate temp
+    s_temp, plate_temp = sample_temp(regprops,flip_frames)
+    return flip_frames, regprops, s_temp, plate_temp
+
 
 ##########################################################################################################################################################################
 ##########################################################################################################################################################################
@@ -216,12 +243,14 @@ def pixel_sum(frame):
     column_sum = [x * -1 for x in column_sum]
     row_sum = [x * -1 for x in row_sum]
     plt.plot(range(len(column_sum)),column_sum)
-    plt.xlabel('X-coordinate value')
+    plt.xlabel('Column index')
     plt.ylabel('Sum of pixel values over columns')
+    plt.title('Sum of pixel values over columns against column index')
     plt.show()
     plt.plot(range(len(row_sum)),row_sum)
-    plt.xlabel('Y-coordinate value')
+    plt.xlabel('Row index')
     plt.ylabel('Sum of pixel values over rows')
+    plt.title('Sum of pixel values over rows against row index')
     plt.show()
     return column_sum,row_sum
 
@@ -268,6 +297,7 @@ def peak_values(column_sum,row_sum,n_columns,n_rows,image):
     plt.imshow(image)
     plt.scatter(sample_location['Y'],sample_location['X'],s=4)
     plt.scatter(sample_location['plate_location'],sample_location['X'],s=4)
+    plt.title('Sample and plate location at which the temperature profile is monitored')
     plt.show()
     return sample_location
 
@@ -298,3 +328,31 @@ def pixel_intensity(sample_location, frames, x_name, y_name, plate_name):
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
 
+##### Wrapping Function ######
+def pixel_temp(frames,n_frames,n_columns,n_rows):
+    ''' Function to determine the temperature of the samples and plate locations by analysing 
+    pixel values and finding peaks.
+    Args:
+    frames: The frames of a video to be analysed.
+    n_frames: Number of frames in the video
+    n_columns: Number of columns of samples in the image
+    n_rows: Number of rows of samples in the image.
+    Returns:
+    temp(List): A list containing a list a temperatures for each sample
+    in every frame of the video 
+    plate_temp(List): A list containing a list a temperatures for each plate
+    location in every frame of the video.
+    '''
+    #Function to obtained an equalized image using all the frames
+    #in the video.
+    img_eq = image_eq(n_frames,frames)
+    #Funtion to determine sum of pixels over all the rows and columns
+    #to obtain plots with peaks at the sample position in the array.
+    column_sum,row_sum = pixel_sum(img_eq)
+    # Function to find peaks from the column_sum and row_sum arrays
+    # and return a dataframe with sample locations.
+    sample_location = peak_values(column_sum,row_sum,n_columns,n_rows,img_eq)
+    # Function to find pixel intensity at all sample locations
+    # and plate locations in each frame.
+    temp,plate_temp = pixel_intensity(sample_location, frames, x_name = 'X', y_name = 'Y', plate_name = 'plate_location')
+    return temp,plate_temp

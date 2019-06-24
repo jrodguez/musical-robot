@@ -9,7 +9,7 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.optimize import fsolves
+from scipy.optimize import fsolve
 
 # Function: General Des generator - any number of components will work
 # Step: Generate a large amount of possibilities, narrow down within constraints

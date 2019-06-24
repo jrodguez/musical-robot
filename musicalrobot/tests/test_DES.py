@@ -29,7 +29,6 @@ def test_des_generator():
     assert len(max_comps) == len(DES_molfrac[0]), 'Component space is not equal'
     return
 
-__
 # Function: Converts mol fractions to volumes for pipetting and reference
 # Step: create system of equations, solve system to determine the volume of each
 # Input: DES mol fractions, desired vol, stock solutions
@@ -75,5 +74,5 @@ def test_open_vol():
     # running
     open_vol = DES.open_vol(final_vol)
     # asserts
-    assert isinstance(open_vol, np.ndarray),'Output is not a array'
+    assert isinstance(open_vol, list),'Output is not a array'
     return

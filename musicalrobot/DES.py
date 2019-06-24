@@ -50,12 +50,14 @@ def des_generator(min_comps, max_comps, samples, trials):
 def mol_to_vol(DES_molfrac, stock, volume):
     '''Converts mol fractions to volumes depending on desired volume and stocks'''
     # pre-processing
-    size = (samples, number)
-    finvol = np.zeros(size)
     number = len(stock)
+    samples = len(DES_molfrac)
+    size = (samples, number)
+    final_vol = np.zeros(size)
+
 
     count = 0
-    for row in DES_molefrac:
+    for row in DES_molfrac:
         def f(x):
             for i in range(number):
                 total = []
@@ -70,7 +72,7 @@ def mol_to_vol(DES_molfrac, stock, volume):
         x0 = np.array([100.0, 100.0, 100.0])
         x = fsolve(f, x0)
         for i in range(number):
-            finvol[count, i] = x[i]
+            final_vol[count, i] = x[i]
         count = count + 1
     return final_vol
 
@@ -81,13 +83,14 @@ def mol_to_vol(DES_molfrac, stock, volume):
 # Output: open_vol - usuable by opentrons machine
 def open_vol(final_vol):
     '''Converts the array of volumes with comp volumes to two lists of separate volumes'''
-    number = len(finvol[0])
-
+    number = len(final_vol[0])
+    open_vol = []
+    
     for i in range(number):
         string = "comp" + str(i)
         string = []
-        for row in finvol:
+        for row in final_vol:
             hold = row[i]
             string.append(hold)
-        sepvol.append(string)
+        open_vol.append(string)
     return open_vol

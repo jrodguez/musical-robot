@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/pozzocapstone/musical-robot.svg?branch=master)](https://travis-ci.com/pozzocapstone/musical-robot)
 
 # musical-robot  
-High-throughput measurement of deep eutectic solvents’ melting point using IR bolometry
+Python module for high-throughput measurement of deep eutectic solvents’ melting point using IR bolometry
 
 ## Introduction
 Deep eutectic solvents (DES) are novel solvents that can be easily produced at low-cost for several important applications, such as chemical synthesis, extractions, electrochemistry, and even pharmaceutical drug delivery. The design space for DES is enormous and high throughput measurement of melting points is required to rapidly identify DES with melting points that are feasible for their specific application. High throughput measurement of melting points was made possible through the use of an infrared camera and subsequent image analysis. The melting point of the DES was obtained by recording the temperature profile of the sample as it was heated, and locating the inflection point in the profile that results from an increase in thermal conductivity as the sample melts.  The python package developed is able to obtain accurate melting points of multiple samples at once, while only requiring a matter of minutes to perform the physical measurement, and at low-cost. In contrast, standard melting point determination techniques utilize equipment that is orders of magnitude more expensive and can take up to an hour for individual samples. 
@@ -26,3 +26,9 @@ Deep eutectic solvents (DES) are novel solvents that can be easily produced at l
 * This technique can be adapted by using the functions `input_file` and `pixel_temp` from the `musical-robot` module to load the recorded video and obtain the temperature profile of the samples and sample holder.
 
 An example of adapting both the above mentioned techniques using the `musical-robot` module can be found in the ipython notebook `Tutorial.ipynb` found in the examples folder.
+
+## For Development
+* Install python version 3.6
+* Clone the repository on your machine using git clone https://github.com/pozzocapstone/musical-robot. This will create a copy of this repository on your machine.
+* Go to the repository folder using cd musical-robot.
+* Install the python dependencies by using pip install -r requirements.txt

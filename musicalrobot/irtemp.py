@@ -31,6 +31,6 @@ def to_fahrenheit(temp):
 # Output: float values in celcius and fahrenheit
 def to_temperature(temp):
     '''Converts given centikelvin value to both fahrenheit and celcius'''
-    cels = irtemp.centikelvin_to_celsius(temp)
+    cels = centikelvin_to_celsius(temp)
     fahr = cels * 9 / 5 + 32
     return cels, fahr

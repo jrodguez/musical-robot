@@ -109,7 +109,7 @@ def test_centriod_temp():
     crop_frame = []
     for frame in frames:
         crop_frame.append(frame[40:100])
-    n_samples = len(crop_frame)
+    n_samples = 5
     flip_frames, regprops, s_temp, p_temp = edge_detection.centroid_temp(crop_frame,n_samples)
     assert isinstance(flip_frames,list),'Output is not a list'
     assert isinstance(regprops,dict),'Output is not a dictionary'

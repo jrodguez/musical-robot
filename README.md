@@ -11,3 +11,18 @@ Deep eutectic solvents (DES) are novel solvents that can be easily produced at l
 
 ## Usage
 
+#### The python package adopts the following two techniques to obtain the temperature profile of the samples and sample holder to determine the melting point of the samples:
+
+1. Temperature profile through edge detection
+
+* This method can be used for images(video frames) with high contrast and minimal noise which will allow for detection of edges of just the samples.
+* The temperature profile of the samples and plate is determined by detecting the edges, filling and labeling them, and monitoring the temperature at their centroids.
+* This technique can be adapted by using the functions `input_file` and `centroid_temp` from the `irtemp` module to load the recorded video and obtain the temperature profile of the samples and sample holder.
+
+2. Temperature profile through pixel value analysis.
+
+* This is an alternative technique for low contrast images(video frames). In some situations, the contrast between the image and sample maybe too low for edge detection, even with contrast enhancement.
+* Alternatively, centroid location for each sample can be found by summing pixel values over individual rows and columns of the sample holder(well plate).
+* This technique can be adapted by using the functions `input_file` and `pixel_temp` from the `musical-robot` module to load the recorded video and obtain the temperature profile of the samples and sample holder.
+
+An example of adapting both the above mentioned techniques using the `musical-robot` module can be found in the ipython notebook `Tutorial.ipynb` found in the examples folder.

@@ -36,7 +36,7 @@ from scipy.signal import find_peaks
 
 def test_input_file():
     '''Test for function which loads the input file'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     assert isinstance(frames, np.ndarray),'Output is not an array'
     return
@@ -44,7 +44,7 @@ def test_input_file():
 def test_flip_frame():
     '''Test for function which flips the frames horizontally
        and vertically to correct for the mirroring during recording.'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -55,7 +55,7 @@ def test_flip_frame():
 
 def test_edge_detection():
     ''' Test for function which detects edges,fills and labels the samples'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -69,7 +69,7 @@ def test_edge_detection():
 def test_regprop():
     '''Test for function which determines centroids of all the samples
     and locations on the plate to obtain temperature from'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -86,7 +86,7 @@ def test_regprop():
 
 def test_sample_temp():
     '''Test for function which obtaines temperature of samples and plate temperature'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:
@@ -104,7 +104,7 @@ def test_sample_temp():
 
 def test_centriod_temp():
     '''Test fir wrapping function'''
-    file_name = ('../musical-robot/doc/PPA_Melting_6_14_19.tiff')
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:

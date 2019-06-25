@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import edge_detection
 
 from skimage import io
 from skimage import feature
@@ -167,9 +168,10 @@ def pixel_temp(frames,n_frames,n_columns,n_rows):
     plate_temp(List): A list containing a list a temperatures for each plate
     location in every frame of the video.
     '''
+    flip_frames = edge_detection.flip_frame(frames)
     #Function to obtained an equalized image using all the frames
     #in the video.
-    img_eq = image_eq(n_frames,frames)
+    img_eq = image_eq(n_frames,flip_frames)
     #Funtion to determine sum of pixels over all the rows and columns
     #to obtain plots with peaks at the sample position in the array.
     column_sum,row_sum = pixel_sum(img_eq)

@@ -38,8 +38,6 @@ def to_temperature(temp):
     return cels, fahr
 
 
-
-
 # Function: Determines the slope between temperature points with some smoothing
 # Step: append all slopes and index points to variables, using given jump distance
 # Input: jump, the sample temp data set for given sample
@@ -119,7 +117,7 @@ def melting_temperature(sample_temp, jump, factor):
 # Input: all sample temperatures for all samples
 # Output: all sample melting temperature, all possible indexes of other melting temps
 def all_melting(sample_temp):
-    '''Looping through all samples to determine all melting temperatures'''
+'''Looping through all samples to determine all melting temperatures'''
     all_melt = []
     all_possible = []
 
@@ -129,5 +127,4 @@ def all_melting(sample_temp):
 
         all_melt.append(hold_melt)
         all_possible.append(hold_possible)
-
     return all_melt, all_possible

@@ -54,7 +54,7 @@ def test_slope_gen():
     '''Test:Determines the slope between temperature points with some smoothing'''
 #inputs
     sample_temp = [3,5,6,7,2,7,2,4]
-    plate_temp = [5,2,5,7,2,7,3,5]
+    plate_temp = [5,2,5,7,6,7,3,5]
     jump = 2
 #running function
     all_slope, all_index = irtemp.slope_gen(sample_temp, plate_temp, jump)
@@ -121,11 +121,11 @@ def test_melting_temperature():
 def test_all_melting():
     '''Looping through all samples to determine all melting temperatures'''
     #inputs
-    sample_temp = [3,5,6,7,2,7,2,4]
+    all_sample_temp = [[3,5,6,7,2,7,2,4], [4,1,6,7,2,4,6,1]]
     plate_temp = [5,2,5,7,2,7,3,5]
     jump = 2
     factor = 3
     #running function
-    all_melt, all_possible = irtemp.all_melting(sample_temp, plate_temp, jump, factor)
+    all_melt, all_possible = irtemp.all_melting(all_sample_temp, plate_temp, jump, factor)
     #asserts
     return all_melt, all_possible

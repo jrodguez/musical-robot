@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from pandas import DataFrame
 import pandas as pd
+import numpy as np
 
 
 
@@ -38,7 +39,7 @@ def export_csv(final_data):
 # Output: reordered list of named compoents
 def molfrac_prep(DES_molfrac, names):
     '''Adapts the pipetting order to the temperature reading order'''
-    # !! Assumes a 96 well plate in teh opentrons pipetting robot with 2 components
+    # !! Assumes a 96 well plate in the opentrons pipetting robot with 2 components
     number = len(DES_molfrac[0])
     array1 = np.zeros((8,12))
     array2 = np.zeros((8,12))
@@ -59,21 +60,21 @@ def molfrac_prep(DES_molfrac, names):
                 comp2.append(hold)
         else:
             pass
-
+    index = 0
     for i in range(len(array1[0])):
         for j in range(len(array1)):
             array1[j, i] = comp1[index]
             index = index +1
-
+    index= 0
     for i in range(len(array2[0])):
         for j in range(len(array2)):
             array2[j, i] = comp2[index]
             index = index +1
-
+    index=0
     for i in range(len(array1)):
         hold1 = array1[i]
         ordered1.extend(hold1)
-
+    index=0
     for i in range(len(array2)):
         hold2 = array2[i]
         ordered2.extend(hold2)

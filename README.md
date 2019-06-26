@@ -34,6 +34,6 @@ An example of adapting both the above mentioned techniques using the `musicalrob
 
 ## For Development
 * Install python version 3.6
-* Clone the repository on your machine using git clone https://github.com/pozzocapstone/musical-robot. This will create a copy of this repository on your machine.
+* Clone the repository on your machine using git clone https://github.com/pozzocapstone/musical-robot.git . This will create a copy of this repository on your machine.
 * Go to the repository folder using cd musical-robot.
 * Install the python dependencies by using pip install -r requirements.txt

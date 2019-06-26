@@ -47,7 +47,6 @@ def molfrac_prep(DES_molfrac, names):
     ordered1 = []
     ordered2 = []
 
-
     for i in range(number):
         if i == 0:
             for row in DES_molfrac:

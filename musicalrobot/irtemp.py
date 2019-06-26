@@ -42,20 +42,23 @@ def to_temperature(temp):
 # Step: append all slopes and index points to variables, using given jump distance
 # Input: jump, the sample temp data set for given sample
 # Output: slope for each requested jump, index for each requested jump
-def slope_gen(sample_temp, jump):
+def slope_gen(sample_temp, plate_temp, jump):
     '''Determines the slope between temperature points with some smoothing'''
     # reccomended jump higher than 15
+    y = sample_temp
+    x = plate_temp
     all_slope = []
     all_index = []
+    index = 0
 
     while index < len(y):
-        slope = (y[index]-y[index + jump])/(x[index]-x[index + jump])
-        index = index + jump
+        slope = ([index]-y[index + jump])/(x[index]-x[index + jump])
         if index >= len(y) - jump:
             break
 
         all_slope.append(slope)
         all_index.append(index)
+        index = index + jump
 
     return all_slope, all_index
 
@@ -104,7 +107,7 @@ def inflection_temp(smooth_slope, smooth_index, sample_temp):
 # Step: combines all of the following inflection point functions into one
 # Input: sample temperatures, desired intial jump, smoothing factor
 # Output: melting temperature and other possible values if determined to be incorrect
-def melting_temperature(sample_temp, jump, factor):
+def melting_temperature(sample_temp, plate_temp, jump, factor):
     '''Wraps all of the inflection point functions to a single one'''
     all_slope, all_index = irtemp.slope_gen(sample_temp, jump)
     smooth_slope, smooth_index = irtemp.smoothing_slope(all_slope, all_index, factor)
@@ -116,12 +119,12 @@ def melting_temperature(sample_temp, jump, factor):
 # Step: loop through the different samples running the wrapped melting temp function for each one
 # Input: all sample temperatures for all samples
 # Output: all sample melting temperature, all possible indexes of other melting temps
-def all_melting(sample_temp):
-'''Looping through all samples to determine all melting temperatures'''
+def all_melting(sample_temp, plate_temp, jump, factor):
+    '''Looping through all samples to determine all melting temperatures'''
     all_melt = []
     all_possible = []
 
-    for i in range(len(sample_temp))
+    for i in range(len(sample_temp)):
         sample_temp = sample_temp[i]
         hold_melt, hold_possible = irtemp.melting_temperature(sample_temp, jump, factor)
 

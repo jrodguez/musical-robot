@@ -7,7 +7,7 @@
 
 from setuptools import setup
 
-setup(name = 'musical-robot',
+setup(name = 'musicalrobot',
     version = '0.1',
     packages = ['musicalrobot'],
     url = 'https://github.com/pozzocapstone/musical-robot',

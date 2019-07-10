@@ -1,7 +1,7 @@
 import os,sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import DES
+from musicalrobot import DES
 
 from sklearn.cluster import KMeans
 import random
@@ -85,7 +85,7 @@ def open_vol(final_vol):
     '''Converts the array of volumes with comp volumes to two lists of separate volumes'''
     number = len(final_vol[0])
     open_vol = []
-    
+
     for i in range(number):
         string = "comp" + str(i)
         string = []

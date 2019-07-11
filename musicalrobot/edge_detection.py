@@ -86,8 +86,8 @@ def regprop(labeled_samples,frames,n_samples):
     regprops = {} 
     for i in range(len(frames)):
         props = regionprops(labeled_samples, intensity_image=frames[i])
-        x = np.zeros(len(props)).astype(int)
-        y = np.zeros(len(props)).astype(int)
+        row = np.zeros(len(props)).astype(int)
+        column = np.zeros(len(props)).astype(int)
         area = np.zeros(len(props))
         perim = np.zeros(len(props))
         intensity = np.zeros(len(props),dtype=np.float64)
@@ -96,19 +96,19 @@ def regprop(labeled_samples,frames,n_samples):
        
         c = 0
         for prop in props:
-            x[c] = int(prop.centroid[0])
-            y[c] = int(prop.centroid[1])
+            row[c] = int(prop.centroid[0])
+            column[c] = int(prop.centroid[1])
             #print(y[c])
             area[c] = prop.area
             perim[c] = prop.perimeter
-            intensity[c] = frames[i][x[c]][y[c]]
-            plate[c] = frames[i][x[c]][y[c]+10]
-            plate_coord[c] = y[c]+10
+            intensity[c] = frames[i][row[c]][column[c]]
+            plate[c] = frames[i][row[c]][column[c]+10]
+            plate_coord[c] = column[c]+10
             c = c + 1
             
-        regprops[i] = pd.DataFrame({'X': x, 'Y': y,'Plate':plate,'Plate_coord':plate_coord ,'Area': area,
+        regprops[i] = pd.DataFrame({'Row': row, 'Column': column,'Plate':plate,'Plate_coord':plate_coord ,'Area': area,
                                 'Perim': perim, 'Mean Intensity': intensity},dtype=np.float64)
-        regprops[i].sort_values(['Y','X'],inplace=True)
+        regprops[i].sort_values(['Column','Row'],inplace=True)
         if len(regprops[i]) != n_samples:
             print('Wrong number of samples are being detected in frame %d' %i)    
     return regprops

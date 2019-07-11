@@ -101,27 +101,26 @@ def peak_values(column_sum,row_sum,n_columns,n_rows,image):
     column_peaks = column_peaks[0]
     row_peaks = find_peaks(row_sum,distance=10)
     row_peaks = row_peaks[0]
-    X = []
-    Y = []
+    row = []
+    column = []
     plate_location = []
     i = 0
     j = 0
-    for i in range(0,n_rows):
-        for j in range(0,n_columns):
-            Y.append(column_peaks[j])
+    for i in range(0,n_columns):
+        for j in range(0,n_rows):
+            row.append(row_peaks[j])
+            column.append(column_peaks[i])
             if j == 0:
-                plate_location.append(int((Y[j]-0)/2))
+                plate_location.append(int((row[j]-0)/2))
             else:
-                plate_location.append(int((Y[j] + Y[j-1])/2))
+                plate_location.append(int((row[j] + row[j-1])/2))
             j = j + 1
-            X.append(row_peaks[i])
-            
         i = i + 1
     
-    sample_location = pd.DataFrame(list(zip(X, Y, plate_location)),columns =['X', 'Y','plate_location'])
+    sample_location = pd.DataFrame(list(zip(row, column, plate_location)),columns =['Row', 'Column','plate_location'])
     plt.imshow(image)
-    plt.scatter(sample_location['Y'],sample_location['X'],s=4)
-    plt.scatter(sample_location['plate_location'],sample_location['X'],s=4)
+    plt.scatter(sample_location['Column'],sample_location['Row'],s=4)
+    plt.scatter(sample_location['Column'],sample_location['plate_location'],s=4)
     plt.title('Sample and plate location at which the temperature profile is monitored')
     plt.show()
     return sample_location
@@ -148,7 +147,7 @@ def pixel_intensity(sample_location, frames, x_name, y_name, plate_name):
         plate_well_temp = []
         for frame in frames:
             temp_well.append(centikelvin_to_celsius(frame[x[i]][y[i]]))
-            plate_well_temp.append(centikelvin_to_celsius(frame[x[i]][p[i]]))
+            plate_well_temp.append(centikelvin_to_celsius(frame[p[i]][y[i]]))
         temp.append(temp_well)
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
@@ -180,5 +179,5 @@ def pixel_temp(frames,n_frames,n_columns,n_rows):
     sample_location = peak_values(column_sum,row_sum,n_columns,n_rows,img_eq)
     # Function to find pixel intensity at all sample locations
     # and plate locations in each frame.
-    temp,plate_temp = pixel_intensity(sample_location, frames, x_name = 'X', y_name = 'Y', plate_name = 'plate_location')
+    temp,plate_temp = pixel_intensity(sample_location, frames, x_name = 'Row', y_name = 'Column', plate_name = 'plate_location')
     return temp,plate_temp

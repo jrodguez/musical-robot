@@ -76,8 +76,8 @@ def test_pixel_intensity():
     n_columns = 12
     n_rows = 8
     sample_location = pixel_analysis.peak_values(column_sum,row_sum,n_columns,n_rows,img_eq)
-    x_name = 'X'
-    y_name = 'Y'
+    x_name = 'Row'
+    y_name = 'Column'
     plate_name = 'plate_location'
     pixel_sample,pixel_plate = pixel_analysis.pixel_intensity(sample_location, pixel_frames, x_name,y_name,plate_name)
     assert isinstance(pixel_sample,list),'Output is not a list'

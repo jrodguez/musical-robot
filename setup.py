@@ -14,9 +14,9 @@ setup(name = 'musicalrobot',
     license = 'MIT',
     author = 'Shrilakshmi Bonageri, Jaime Rodriguez, Sage Scheiwiller',
     description= 'A package for high-throughput measurement of deep eutectic solvents’ melting point using IR bolometry',
-    description_content_type = 'text/markdown; charset=UTF-8; variant=GFM'
+    description_content_type = 'text/markdown; charset=UTF-8; variant=GFM',
     short_description = 'Melting temperature determination using IR bolometry',
-    short_description_content_type = 'text/markdown'
+    short_description_content_type = 'text/markdown',
     long_description = open('README.MD','r').read(),
     long_description_content_type = 'text/markdown; charset=UTF-8; variant=GFM'
     zip_safe = False

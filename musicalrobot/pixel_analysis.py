@@ -1,5 +1,5 @@
 import os,sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 import skimage
@@ -181,3 +181,4 @@ def pixel_temp(frames,n_frames,n_columns,n_rows):
     # and plate locations in each frame.
     temp,plate_temp = pixel_intensity(sample_location, frames, x_name = 'Row', y_name = 'Column', plate_name = 'plate_location')
     return temp,plate_temp
+

@@ -120,9 +120,9 @@ def inflection_temp(smooth_slope, smooth_index, sample_temp):
 # Output: melting temperature and other possible values if determined to be incorrect
 def melting_temperature(sample_temp, plate_temp, jump, factor):
     '''Wraps all of the inflection point functions to a single one'''
-    all_slope, all_index = irtemp.slope_gen(sample_temp, plate_temp, jump)
-    smooth_slope, smooth_index = irtemp.smoothing_slope(all_slope, all_index, factor)
-    melt_temp, index_poss = irtemp.inflection_temp(smooth_slope, smooth_index, sample_temp)
+    all_slope, all_index = slope_gen(sample_temp, plate_temp, jump)
+    smooth_slope, smooth_index = smoothing_slope(all_slope, all_index, factor)
+    melt_temp, index_poss = inflection_temp(smooth_slope, smooth_index, sample_temp)
     return melt_temp, index_poss
 
 
@@ -137,7 +137,7 @@ def all_melting(all_sample_temp, plate_temp, jump, factor):
 
     for i in range(len(all_sample_temp)):
         sample_temp = all_sample_temp[i]
-        hold_melt, hold_possible = irtemp.melting_temperature(sample_temp, plate_temp, jump, factor)
+        hold_melt, hold_possible = melting_temperature(sample_temp, plate_temp, jump, factor)
 
         all_melt.append(hold_melt)
         all_possible.append(hold_possible)

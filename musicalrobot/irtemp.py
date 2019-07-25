@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 import numpy as np
 
-import irtemp
 
 # Function 1: Converts the raw centikelvin reading to Celcius
 # Step: convert using given formula for centikelvin to celcius

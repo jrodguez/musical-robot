@@ -4,9 +4,6 @@ from pandas import DataFrame
 import pandas as pd
 import numpy as np
 
-import post_data
-
-
 
 # Function: Exports data as a csv for user use
 # Step: creates UI buttons to save, exports to user chosen place

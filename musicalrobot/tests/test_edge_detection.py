@@ -20,6 +20,7 @@ from skimage.morphology import remove_small_objects
 from scipy.signal import find_peaks
 
 
+
 # def test_name():
 #     '''Doc String'''
 #     #inputs
@@ -102,22 +103,33 @@ def test_sample_temp():
     assert len(plate_temp) == n_samples,'Temperature obtained for wrong number of plate locations'
     return
 
+def test_inflection_point():
+    '''Test for function which determines inflection point(melting point)'''
+    file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
+    frames = edge_detection.input_file(file_name)
+    crop_frame = []
+    for frame in frames:
+        crop_frame.append(frame[40:100])
+    flip_frames = edge_detection.flip_frame(crop_frame)
+    labeled_samples = edge_detection.edge_detection(flip_frames)
+    n_samples = 5
+    regprops = edge_detection.regprop(labeled_samples,flip_frames,n_samples)
+    s_temp, p_temp = edge_detection.sample_temp(regprops,flip_frames)
+    inf_temp = edge_detection.inflection_point(s_temp, p_temp)
+    assert isinstance(inf_temp, list),'Output is not a list'
+    assert len(inf_temp) == n_samples,'Wrong number of samples detected'
+    return
+
 def test_centriod_temp():
-    '''Test fir wrapping function'''
+    '''Test for wrapping function'''
     file_name = ('../musical-robot/musicalrobot/data/PPA_Melting_6_14_19.tiff')
     frames = edge_detection.input_file(file_name)
     crop_frame = []
     for frame in frames:
         crop_frame.append(frame[40:100])
     n_samples = 5
-    flip_frames, regprops, s_temp, p_temp = edge_detection.centroid_temp(crop_frame,n_samples)
-    assert isinstance(flip_frames,list),'Output is not a list'
-    assert isinstance(regprops,dict),'Output is not a dictionary'
-    assert len(regprops)==len(flip_frames),'The number of dataframes in the dictionary is not equal to number of frames input.'
-    for i in range(len(flip_frames)):
-        assert len(regprops[i])==n_samples,'Wrong number of samples detected'
-    assert isinstance(s_temp,list),'Sample temperature output is not a list'
-    assert isinstance(p_temp,list),'Plate temperature output is not a list'
-    assert len(s_temp) == n_samples,'Temperature obtained for wrong number of samples'
-    assert len(p_temp) == n_samples,'Temperature obtained for wrong number of plate locations'
+    inf_temp = edge_detection.centroid_temp(crop_frame,n_samples) 
+    assert isinstance(inf_temp, list),'Output is not a list'
+    assert len(inf_temp) == n_samples,'Wrong number of samples detected'
     return
+

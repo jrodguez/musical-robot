@@ -15,6 +15,7 @@ from skimage.measure import regionprops
 from skimage.exposure import equalize_adapthist
 from skimage.morphology import remove_small_objects  
 from scipy.signal import find_peaks
+from scipy.interpolate import BSpline
 from irtemp import centikelvin_to_celsius
 
 ##########################################################################################################################################################################
@@ -137,6 +138,65 @@ def sample_temp(regprops,frames):
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
 
+# Function to obtain melting point by extracting the inflection point
+def inflection_point(s_temp,p_temp):
+    '''Function to determine inflection point in the sample temperature
+    profile(melting point)
+    Args:
+    s_temp(list): Temperature of all the samples in every frame of the video.
+    p_temp(list): Temperature of the plate next to every sample in every
+        frame of the video.
+    Returns:
+    inf_temp(list): List of temperature at inflection points for each sample
+    '''
+    s_infl = []
+    p_infl = []
+    s_peaks = []
+    p_peaks = []
+    inf_peak = [] ; inf_temp = []
+    for temp in s_temp:
+        frames = np.linspace(1,len(temp),len(temp))
+        bspl = BSpline(frames,temp,k=3)
+        gradient_array = np.column_stack((frames,bspl(frames)))
+        gradient = np.gradient(gradient_array,axis=0)
+        derivative = gradient[:,1]/gradient[:,0]
+        peaks, properties = find_peaks(derivative,height=0.1)
+        max_height1 = np.max(properties['peak_heights'])
+        # To find the second highest peak
+        a = list(properties['peak_heights'])
+        a.remove(max_height1)
+        max_height2 = np.max(a)
+        inf_index1 = list(properties['peak_heights']).index(max_height1)
+        inf_index2 = list(properties['peak_heights']).index(max_height2)
+        s_peaks.append([peaks[inf_index1],peaks[inf_index2]])
+        s_infl.append([temp[peaks[inf_index1]],temp[peaks[inf_index2]]])
+    for temp in p_temp:
+        frames = np.linspace(1,len(temp),len(temp))
+        bspl = BSpline(frames,temp,k=3)
+        gradient_array = np.column_stack((frames,bspl(frames)))
+        gradient = np.gradient(gradient_array,axis=0)
+        derivative = gradient[:,1]/gradient[:,0]
+        peaks, properties = find_peaks(derivative,height=0.1)
+        max_height1 = np.max(properties['peak_heights'])
+        # To find the second highest peak
+        a = list(properties['peak_heights'])
+        a.remove(max_height1)
+        max_height2 = np.max(a)
+        inf_index1 = list(properties['peak_heights']).index(max_height1)
+        inf_index2 = list(properties['peak_heights']).index(max_height2)
+        p_peaks.append([peaks[inf_index1],peaks[inf_index2]])
+        p_infl.append([temp[peaks[inf_index1]],temp[peaks[inf_index2]]])
+    for i,peaks in enumerate(s_peaks):
+        for peak in peaks:
+            if peak - p_peaks[i][0] >= 3:
+                inf_peak.append(peak)
+            else:
+                pass
+    for i,temp in enumerate(s_temp):
+        inf_temp.append(temp[inf_peak[i]])
+    return inf_temp
+
+
 #### Wrapping function ######
 def centroid_temp(frames,n_samples):
     ''' Function to obtain sample temperature and plate temperature
@@ -161,5 +221,8 @@ def centroid_temp(frames,n_samples):
     regprops = regprop(labeled_samples,flip_frames,n_samples)
     # Use the function 'sample_temp' to obtain temperature of samples 
     # and plate temp
-    s_temp, plate_temp = sample_temp(regprops,flip_frames)
-    return flip_frames, regprops, s_temp, plate_temp
+    s_temp, p_temp = sample_temp(regprops,flip_frames)
+    # Use the function 'infection_point' to obtain melting point of samples
+    inf_temp = inflection_point(s_temp,p_temp)
+    return inf_temp
+

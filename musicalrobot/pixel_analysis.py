@@ -51,7 +51,7 @@ def pixel_sum(frame):
     ''' Funtion to determine sum of pixels over all the rows and columns
         to obtain plots with peaks at the sample position in the array.
         Args:
-        frame(array): An array of an image
+        frame(array):Equalized image 
         Returns:
         column_sum: Sum of pixels over all the columns
         row_sum: Sum of pixels over all the rows

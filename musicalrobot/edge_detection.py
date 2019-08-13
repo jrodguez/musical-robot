@@ -73,13 +73,15 @@ def edge_detection(frames):
     return labeled_samples
 
 # Function to determine centroids of all the samples
-def regprop(labeled_samples,frames,n_samples):
+def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
     ''' Determines the area and centroid of all samples.
         Args:
         labeled_samples(array): An array with labeled samples.
         flip_frames (array) : Original intensity image to determine
         the intensity at sample centroids.
         n_samples: Number of samples in the video being analyzed.
+        n_rows: Number of rows of sample
+        n_columns: Number of columns of sample
         Returns:
         A dictionary of dataframe with information about samples in every
         frame of the video.
@@ -106,12 +108,15 @@ def regprop(labeled_samples,frames,n_samples):
             plate[c] = frames[i][row[c]][column[c]+10]
             plate_coord[c] = column[c]+10
             c = c + 1
-            
+         
         regprops[i] = pd.DataFrame({'Row': row, 'Column': column,'Plate':plate,'Plate_coord':plate_coord ,'Area': area,
                                 'Perim': perim, 'Mean Intensity': intensity},dtype=np.float64)
-        regprops[i].sort_values(['Column','Row'],inplace=True)
         if len(regprops[i]) != n_samples:
             print('Wrong number of samples are being detected in frame %d' %i)    
+        regprops[i].sort_values(['Column','Row'],inplace=True)
+        # After sorting the dataframe according by columns in ascending order.
+        for j in range(0,n_columns):
+            regprops[i][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
     return regprops
 
 # Function to obtain temperature of samples and plate temp
@@ -197,19 +202,27 @@ def inflection_point(s_temp,p_temp):
     return inf_temp
 
 
-#### Wrapping function ######
-def centroid_temp(frames,n_samples):
+#### Wrapping functions ######
+# Wrapping function to get the inflection point
+def inflection_temp(frames,n_samples,n_rows,n_columns):
     ''' Function to obtain sample temperature and plate temperature
         in every frame of the video using edge detection.
     Args:
         frames(List): An list containing an array for each frame
         in the video or just a single array in case of an image.
         n_samples: Number of samples in the video
-    Returns:
+        n_rows: Number of rows of sample
+        n_columns: Number of columns of sample
+        Returns:
+        flip_frames(array) : An array of images which are flipped to correct the
+        rotation caused by the IR camera
+        regprops(dictionary) : A dictionary of dataframes containing temperature data.
         s_temp(List): A list containing a list a temperatures for each sample
         in every frame of the video 
         plate_temp(List): A list containing a list a temperatures for each plate
         location in every frame of the video.
+        inf_temp: A list containing melting point of all the samples obtained by the plot.
+
     '''
     # Use the function 'flip_frame' to flip the frames horizontally 
     #and vertically to correct for the mirroring during recording
@@ -218,11 +231,10 @@ def centroid_temp(frames,n_samples):
     # label the samples.
     labeled_samples = edge_detection(flip_frames)
     # Use the function 'regprop' to determine centroids of all the samples
-    regprops = regprop(labeled_samples,flip_frames,n_samples)
+    regprops = regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     # Use the function 'sample_temp' to obtain temperature of samples 
     # and plate temp
     s_temp, p_temp = sample_temp(regprops,flip_frames)
     # Use the function 'infection_point' to obtain melting point of samples
     inf_temp = inflection_point(s_temp,p_temp)
-    return inf_temp
-
+    return flip_frames, regprops, s_temp, p_temp, inf_temp

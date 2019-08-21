@@ -66,9 +66,9 @@ def edge_detection(frames):
     labeled_samples: All the samples in the frame are labeled
     so that they can be used as props to get pixel data from.
     '''
-    edges = feature.canny(frames[0]/1500)
+    edges = feature.canny(frames[0]/1400)
     filled_samples = binary_fill_holes(edges)
-    cl_samples = remove_small_objects(filled_samples,min_size = 20)
+    cl_samples = remove_small_objects(filled_samples,min_size = 15)
     labeled_samples = label(cl_samples)
     return labeled_samples
 
@@ -115,8 +115,8 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
             print('Wrong number of samples are being detected in frame %d' %i)    
         regprops[i].sort_values(['Column','Row'],inplace=True)
         # After sorting the dataframe according by columns in ascending order.
-        for j in range(0,n_columns):
-            regprops[i][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
+        # for j in range(0,n_columns):
+        #     regprops[i][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
     return regprops
 
 # Function to obtain temperature of samples and plate temp
@@ -161,19 +161,27 @@ def inflection_point(s_temp,p_temp):
     inf_peak = [] ; inf_temp = []
     for temp in s_temp:
         frames = np.linspace(1,len(temp),len(temp))
+        # Fitting a spline to the temperature profile of the samples.
         bspl = BSpline(frames,temp,k=3)
+        # Stacking x and y to calculate gradient.
         gradient_array = np.column_stack((frames,bspl(frames)))
+        # Calculating gradient
         gradient = np.gradient(gradient_array,axis=0)
+        # Calculating derivative
         derivative = gradient[:,1]/gradient[:,0]
+        # Finding peaks in the derivative plot.
         peaks, properties = find_peaks(derivative,height=0.1)
         max_height1 = np.max(properties['peak_heights'])
         # To find the second highest peak
         a = list(properties['peak_heights'])
         a.remove(max_height1)
         max_height2 = np.max(a)
+        # Appending the index of the two highest peaks to lists.
         inf_index1 = list(properties['peak_heights']).index(max_height1)
         inf_index2 = list(properties['peak_heights']).index(max_height2)
+        # Appending the frame number in which these peaks occur to a list
         s_peaks.append([peaks[inf_index1],peaks[inf_index2]])
+        # Appending the temperature at the peaks.
         s_infl.append([temp[peaks[inf_index1]],temp[peaks[inf_index2]]])
     for temp in p_temp:
         frames = np.linspace(1,len(temp),len(temp))
@@ -193,8 +201,9 @@ def inflection_point(s_temp,p_temp):
         p_infl.append([temp[peaks[inf_index1]],temp[peaks[inf_index2]]])
     for i,peaks in enumerate(s_peaks):
         for peak in peaks:
-            if peak - p_peaks[i][0] >= 3:
+            if abs(peak - p_peaks[i][0]) >= 3:
                 inf_peak.append(peak)
+                break
             else:
                 pass
     for i,temp in enumerate(s_temp):

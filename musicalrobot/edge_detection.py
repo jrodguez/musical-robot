@@ -114,9 +114,12 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         if len(regprops[i]) != n_samples:
             print('Wrong number of samples are being detected in frame %d' %i)    
         regprops[i].sort_values(['Column','Row'],inplace=True)
-        # After sorting the dataframe according by columns in ascending order.
-        # for j in range(0,n_columns):
-        #     regprops[i][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
+    # After sorting the dataframe according by columns in ascending order.
+    for j in range(0,n_columns):
+        regprops[0][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
+    reorder_index = regprops[0].index
+    for i in range(1,len(regprops)):
+        regprops[i].reindex(reorder_index)
     return regprops
 
 # Function to obtain temperature of samples and plate temp
@@ -208,7 +211,7 @@ def inflection_point(s_temp,p_temp):
                 pass
     for i,temp in enumerate(s_temp):
         inf_temp.append(temp[inf_peak[i]])
-    return inf_temp
+    return inf_temp, s_peaks, p_peaks
 
 
 #### Wrapping functions ######
@@ -245,5 +248,5 @@ def inflection_temp(frames,n_samples,n_rows,n_columns):
     # and plate temp
     s_temp, p_temp = sample_temp(regprops,flip_frames)
     # Use the function 'infection_point' to obtain melting point of samples
-    inf_temp = inflection_point(s_temp,p_temp)
+    inf_temp, s_peaks, p_peaks = inflection_point(s_temp,p_temp)
     return flip_frames, regprops, s_temp, p_temp, inf_temp

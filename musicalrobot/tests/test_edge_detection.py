@@ -115,8 +115,10 @@ def test_inflection_point():
     n_samples = 5; n_rows = 1; n_columns = 5
     regprops = edge_detection.regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     s_temp, p_temp = edge_detection.sample_temp(regprops,flip_frames)
-    inf_temp = edge_detection.inflection_point(s_temp, p_temp)
+    inf_temp, s_peaks, p_peaks = edge_detection.inflection_point(s_temp, p_temp)
     assert isinstance(inf_temp, list),'Output is not a list'
+    assert isinstance(s_peaks, list),'Output is not a list'
+    assert isinstance(p_peaks, list),'Output is not a list'
     assert len(inf_temp) == n_samples,'Wrong number of samples detected'
     return
 
@@ -128,7 +130,7 @@ def test_inflection_temp():
     for frame in frames:
         crop_frame.append(frame[40:100])
     n_samples = 5; n_rows = 1; n_columns = 5
-    flip_frames, regprops, s_temp, p_temp, inf_temp = edge_detection.inflection_temp(crop_frame,n_samples,n_rows,n_columns) 
+    flip_frames, regprops, s_temp, p_temp, inf_temp = edge_detection.inflection_temp(crop_frame,n_samples,n_rows,n_columns)
     assert isinstance(flip_frames,list),'Output is not a list'
     assert isinstance(inf_temp, list),'Output is not a list'
     assert len(inf_temp) == n_samples,'Wrong number of samples detected'

@@ -121,8 +121,9 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         sorted_rows.append(df)
     regprops[0] = pd.concat(sorted_rows)
     reorder_index = regprops[0].index
-    for i in range(1,len(regprops)):
+    for i in range(0,len(regprops)):
         regprops[i].reindex(reorder_index)
+        regprops[i].reset_index(drop=True,inplace=True)
     return regprops
 
 # Function to obtain temperature of samples and plate temp

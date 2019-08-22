@@ -115,8 +115,11 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
             print('Wrong number of samples are being detected in frame %d' %i)    
         regprops[i].sort_values(['Column','Row'],inplace=True)
     # After sorting the dataframe according by columns in ascending order.
+    sorted_rows = []
     for j in range(0,n_columns):
-        regprops[0][j*n_rows:(j+1)*n_rows].sort_values(['Row'],inplace=True)
+        df = regprops[0][j*n_rows:(j+1)*n_rows].sort_values(['Row'])
+        sorted_rows.append(df)
+    regprops[0] = pd.concat(sorted_rows)
     reorder_index = regprops[0].index
     for i in range(1,len(regprops)):
         regprops[i].reindex(reorder_index)

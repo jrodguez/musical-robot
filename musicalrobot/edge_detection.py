@@ -96,6 +96,7 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         intensity = np.zeros(len(props),dtype=np.float64)
         plate = np.zeros(len(props),dtype=np.float64)
         plate_coord = np.zeros(len(props))
+        unique_index = np.zeros(len(props))
        
         c = 0
         for prop in props:
@@ -107,10 +108,11 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
             intensity[c] = frames[i][row[c]][column[c]]
             plate[c] = frames[i][row[c]][column[c]+10]
             plate_coord[c] = column[c]+10
+            unique_index[c] = row[c] + column[c]
             c = c + 1
          
         regprops[i] = pd.DataFrame({'Row': row, 'Column': column,'Plate':plate,'Plate_coord':plate_coord ,'Area': area,
-                                'Perim': perim, 'Mean Intensity': intensity},dtype=np.float64)
+                                'Perim': perim, 'Mean Intensity': intensity,'unique_index':unique_index},dtype=np.float64)
         if len(regprops[i]) != n_samples:
             print('Wrong number of samples are being detected in frame %d' %i)    
         regprops[i].sort_values(['Column','Row'],inplace=True)
@@ -120,7 +122,7 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         df = regprops[0][j*n_rows:(j+1)*n_rows].sort_values(['Row'])
         sorted_rows.append(df)
     regprops[0] = pd.concat(sorted_rows)
-    reorder_index = regprops[0].index
+    reorder_index = regprops[0].unique_index
     for i in range(0,len(regprops)):
         regprops[i].reindex(reorder_index)
         regprops[i].reset_index(drop=True,inplace=True)

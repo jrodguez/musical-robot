@@ -108,6 +108,7 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
             intensity[c] = frames[i][row[c]][column[c]]
             plate[c] = frames[i][row[c]][column[c]+10]
             plate_coord[c] = column[c]+10
+            # Adding the row and column coordinates to get a unique index for each sample.
             unique_index[c] = row[c] + column[c]
             c = c + 1
          
@@ -118,14 +119,19 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         regprops[i].sort_values(['Column','Row'],inplace=True)
     # After sorting the dataframe according by columns in ascending order.
     sorted_rows = []
+    # Sorting the dataframe according to the row coordinate in each column.
+    # The samples are pipetted out top to bottom from left to right.
+    # The order of the samples in the dataframe should match the order of pipetting.
     for j in range(0,n_columns):
         df = regprops[0][j*n_rows:(j+1)*n_rows].sort_values(['Row'])
         sorted_rows.append(df)
     regprops[0] = pd.concat(sorted_rows)
+    # Creating an index to be used for reordering all the dataframes. The unique index is the sum of
+    # row and column coordinates.
     reorder_index = regprops[0].unique_index
-    for i in range(0,len(regprops)):
-        regprops[i].reindex(reorder_index)
-        regprops[i].reset_index(drop=True,inplace=True)
+    for k in range(0,len(regprops)):
+        regprops[k].set_index('unique_index',inplace=True)
+        regprops[k] = regprops[k].reindex(reorder_index)
     return regprops
 
 # Function to obtain temperature of samples and plate temp

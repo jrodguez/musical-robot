@@ -152,8 +152,8 @@ def sample_temp(regprops,frames):
         temp_well = []
         plate_well_temp = []
         for i in range(len(frames)):
-            temp_well.append(centikelvin_to_celsius(regprops[i]['Mean Intensity'][j]))
-            plate_well_temp.append(centikelvin_to_celsius(regprops[i]['Plate'][j]))
+            temp_well.append(centikelvin_to_celsius(list(regprops[i]['Mean Intensity'])[j]))
+            plate_well_temp.append(centikelvin_to_celsius(list(regprops[i]['Plate'])[j]))
         temp.append(temp_well)
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
@@ -261,4 +261,7 @@ def inflection_temp(frames,n_samples,n_rows,n_columns):
     s_temp, p_temp = sample_temp(regprops,flip_frames)
     # Use the function 'infection_point' to obtain melting point of samples
     inf_temp, s_peaks, p_peaks = inflection_point(s_temp,p_temp)
-    return flip_frames, regprops, s_temp, p_temp, inf_temp
+    # Creating a dataframe with row and column coordinates of sample centroid and its
+    # melting temperature (Inflection point).
+    m_df = pd.DataFrame({'Row':regprops[0].Row,'Column':regprops[0].Column,'Melting point':inf_temp})
+    return flip_frames, regprops, s_temp, p_temp, inf_temp, m_df

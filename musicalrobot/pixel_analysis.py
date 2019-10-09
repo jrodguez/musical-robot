@@ -152,6 +152,7 @@ def pixel_intensity(sample_location, frames, x_name, y_name, plate_name):
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
 
+
 ##### Wrapping Function ######
 def pixel_temp(frames,n_frames,n_columns,n_rows):
     ''' Function to determine the temperature of the samples and plate locations by analysing 

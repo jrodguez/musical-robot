@@ -18,6 +18,7 @@ from skimage.exposure import equalize_adapthist
 from skimage.morphology import remove_small_objects  
 from scipy.signal import find_peaks
 from irtemp import centikelvin_to_celsius
+from edge_detection import inflection_point
 
 ##########################################################################################################################################################################
 ##########################################################################################################################################################################
@@ -163,10 +164,8 @@ def pixel_temp(frames,n_frames,n_columns,n_rows):
     n_columns: Number of columns of samples in the image
     n_rows: Number of rows of samples in the image.
     Returns:
-    temp(List): A list containing a list a temperatures for each sample
-    in every frame of the video 
-    plate_temp(List): A list containing a list a temperatures for each plate
-    location in every frame of the video.
+    m_df(Dataframe): A dataframe containing row and column coordinates of each sample 
+    and its respective inflection point obtained. 
     '''
     flip_frames = edge_detection.flip_frame(frames)
     #Function to obtained an equalized image using all the frames
@@ -181,5 +180,9 @@ def pixel_temp(frames,n_frames,n_columns,n_rows):
     # Function to find pixel intensity at all sample locations
     # and plate locations in each frame.
     temp,plate_temp = pixel_intensity(sample_location, frames, x_name = 'Row', y_name = 'Column', plate_name = 'plate_location')
-    return temp,plate_temp
+    # Function to obtain the inflection point(melting point) from the temperature profile.
+    inf_temp, s_peaks, p_peaks = inflection_point(temp,plate_temp)
+    # Dataframe with sample location (row and column coordinates) and respective inflection point.
+    m_df = pd.DataFrame({'Row':sample_location.Row,'Column':sample_location.Column,'Melting point':inf_temp})
+    return m_df
 

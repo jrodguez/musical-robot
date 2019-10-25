@@ -11,6 +11,7 @@ import numpy as np
 # Output: no output - prompt to save the data to a csv
 def export_csv(final_data):
     '''Exports the dataframe of the run into a csv file to be saved or modifed as desired'''
+    global df
     df = final_data
 
     root= tk.Tk()

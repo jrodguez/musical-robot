@@ -92,9 +92,7 @@ def test_pixel_temp():
     n_frames = len(pixel_frames)
     n_columns = 12
     n_rows = 8
-    temp, plate_temp = pixel_analysis.pixel_temp(pixel_frames,n_frames,n_columns,n_rows)
-    assert isinstance(temp,list),'Output is not a list'
-    assert isinstance(plate_temp,list),'Output is not a list'
-    assert len(temp)==n_columns*n_rows,'Temperature obtained for wrong number of samples'
-    assert len(plate_temp)==n_columns*n_rows,'Temperature obtained for wrong number of plate locations'
+    m_df = pixel_analysis.pixel_temp(pixel_frames,n_frames,n_columns,n_rows)
+    assert isinstance(m_df,pd.DataFrame),'Output obtained is not a dataframe'
+    assert len(m_df)==n_columns*n_rows,'Temperature obtained for wrong number of samples'
     return

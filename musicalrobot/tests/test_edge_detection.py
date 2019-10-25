@@ -141,5 +141,6 @@ def test_inflection_temp():
     assert len(s_temp) == n_samples,'Temperature obtained for wrong number of samples'
     assert len(p_temp) == n_samples,'Temperature obtained for wrong number of plate locations'
     assert isinstance(m_df,pd.DataFrame),'Output is not a dataframe'
+    assert len(m_df) == n_samples, 'Inflection temperatures obtained for wrong number of samples'
     return
 

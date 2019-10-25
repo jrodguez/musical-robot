@@ -246,7 +246,8 @@ def inflection_temp(frames,n_samples,n_rows,n_columns):
         plate_temp(List): A list containing a list a temperatures for each plate
         location in every frame of the video.
         inf_temp: A list containing melting point of all the samples obtained by the plot.
-
+        m_df(Dataframe): A dataframe containing row and column coordinates of each sample 
+        and its respective inflection point obtained.
     '''
     # Use the function 'flip_frame' to flip the frames horizontally 
     #and vertically to correct for the mirroring during recording

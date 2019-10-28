@@ -8,7 +8,7 @@
 from setuptools import setup
 
 setup(name = 'musicalrobot',
-    version = '0.93',
+    version = '0.94',
     packages = ['musicalrobot'],
     url = 'https://github.com/pozzocapstone/musical-robot',
     license = 'MIT',

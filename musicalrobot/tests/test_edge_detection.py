@@ -62,7 +62,8 @@ def test_edge_detection():
     for frame in frames:
         crop_frame.append(frame[40:100])
     flip_frames = edge_detection.flip_frame(crop_frame)
-    labeled_samples = edge_detection.edge_detection(flip_frames)
+    n_samples = 5
+    labeled_samples = edge_detection.edge_detection(flip_frames, n_samples)
     assert isinstance(labeled_samples, np.ndarray),'Output is not an array'
     assert flip_frames[0].shape == labeled_samples.shape,'Input and Output array shapes are different.'
     return
@@ -76,8 +77,8 @@ def test_regprop():
     for frame in frames:
         crop_frame.append(frame[40:100])
     flip_frames = edge_detection.flip_frame(crop_frame)
-    labeled_samples = edge_detection.edge_detection(flip_frames)
     n_samples = 5; n_rows = 1; n_columns = 5
+    labeled_samples = edge_detection.edge_detection(flip_frames, n_samples)
     regprops = edge_detection.regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     assert isinstance(regprops,dict),'Output is not a dictionary'
     assert len(regprops)==len(flip_frames),'The number of dataframes in the dictionary is not equal to number of frames input.'
@@ -93,8 +94,8 @@ def test_sample_temp():
     for frame in frames:
         crop_frame.append(frame[40:100])
     flip_frames = edge_detection.flip_frame(crop_frame)
-    labeled_samples = edge_detection.edge_detection(flip_frames)
     n_samples = 5; n_rows = 1; n_columns = 5
+    labeled_samples = edge_detection.edge_detection(flip_frames, n_samples)
     regprops = edge_detection.regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     temp, plate_temp = edge_detection.sample_temp(regprops,flip_frames)
     assert isinstance(temp,list),'Sample temperature output is not a list'
@@ -111,8 +112,8 @@ def test_inflection_point():
     for frame in frames:
         crop_frame.append(frame[40:100])
     flip_frames = edge_detection.flip_frame(crop_frame)
-    labeled_samples = edge_detection.edge_detection(flip_frames)
     n_samples = 5; n_rows = 1; n_columns = 5
+    labeled_samples = edge_detection.edge_detection(flip_frames, n_samples)
     regprops = edge_detection.regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     s_temp, p_temp = edge_detection.sample_temp(regprops,flip_frames)
     inf_temp, s_peaks, p_peaks = edge_detection.inflection_point(s_temp, p_temp)

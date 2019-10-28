@@ -5,6 +5,7 @@ import skimage
 import numpy as np
 import pandas as pd
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 
 from skimage import io
@@ -56,7 +57,7 @@ def flip_frame(frames):
     return flip_frames
 
 # Function to detect edges, fill and label the samples.
-def edge_detection(frames):
+def edge_detection(frames, n_samples):
     ''' To detect the edges of the wells, fill and label them to
     determine their centroids.
     Args:
@@ -66,10 +67,14 @@ def edge_detection(frames):
     labeled_samples: All the samples in the frame are labeled
     so that they can be used as props to get pixel data from.
     '''
-    edges = feature.canny(frames[0]/1400)
-    filled_samples = binary_fill_holes(edges)
-    cl_samples = remove_small_objects(filled_samples,min_size = 15)
-    labeled_samples = label(cl_samples)
+    for size in range(15,9,-1):
+        edges = feature.canny(frames[0]/1400)
+        filled_samples = binary_fill_holes(edges)
+        cl_samples = remove_small_objects(filled_samples,min_size = size)
+        labeled_samples = label(cl_samples)
+        props = regionprops(labeled_samples, intensity_image=frames[0])
+        if len(props) == n_samples:
+            break
     return labeled_samples
 
 # Function to determine centroids of all the samples
@@ -86,17 +91,19 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
         A dictionary of dataframe with information about samples in every
         frame of the video.
     '''
-    regprops = {} 
+    regprops = {}
+    unique_index = random.sample(range(100),n_samples)
     for i in range(len(frames)):
         props = regionprops(labeled_samples, intensity_image=frames[i])
+        # Initializing arrays for all sample properties obtained from regprops.
         row = np.zeros(len(props)).astype(int)
         column = np.zeros(len(props)).astype(int)
         area = np.zeros(len(props))
+        radius = np.zeros(len(props))
         perim = np.zeros(len(props))
         intensity = np.zeros(len(props),dtype=np.float64)
         plate = np.zeros(len(props),dtype=np.float64)
         plate_coord = np.zeros(len(props))
-        unique_index = np.zeros(len(props))
        
         c = 0
         for prop in props:
@@ -105,15 +112,13 @@ def regprop(labeled_samples,frames,n_samples,n_rows,n_columns):
             #print(y[c])
             area[c] = prop.area
             perim[c] = prop.perimeter
+            radius[c] = prop.equivalent_diameter/2
             intensity[c] = frames[i][row[c]][column[c]]
-            plate[c] = frames[i][row[c]][column[c]+10]
-            plate_coord[c] = column[c]+10
-            # Adding the row and column coordinates to get a unique index for each sample.
-            unique_index[c] = row[c] + column[c]
+            plate[c] = frames[i][row[c]][column[c]+int(radius[c])+3]
+            plate_coord[c] = column[c]+radius[c]+3
             c = c + 1
-         
-        regprops[i] = pd.DataFrame({'Row': row, 'Column': column,'Plate':plate,'Plate_coord':plate_coord ,'Area': area,
-                                'Perim': perim, 'Mean Intensity': intensity,'unique_index':unique_index},dtype=np.float64)
+        regprops[i] = pd.DataFrame({'Row': row, 'Column': column,'Plate_temp(cK)':plate,'Radius':radius,'Plate_coord':plate_coord ,'Area': area,
+                                'Perim': perim, 'Sample_temp(cK)': intensity,'unique_index':unique_index},dtype=np.float64)
         if len(regprops[i]) != n_samples:
             print('Wrong number of samples are being detected in frame %d' %i)    
         regprops[i].sort_values(['Column','Row'],inplace=True)
@@ -152,8 +157,8 @@ def sample_temp(regprops,frames):
         temp_well = []
         plate_well_temp = []
         for i in range(len(frames)):
-            temp_well.append(centikelvin_to_celsius(list(regprops[i]['Mean Intensity'])[j]))
-            plate_well_temp.append(centikelvin_to_celsius(list(regprops[i]['Plate'])[j]))
+            temp_well.append(centikelvin_to_celsius(list(regprops[i]['Sample_temp(cK)'])[j]))
+            plate_well_temp.append(centikelvin_to_celsius(list(regprops[i]['Plate_temp(cK)'])[j]))
         temp.append(temp_well)
         plate_temp.append(plate_well_temp)
     return temp,plate_temp
@@ -254,7 +259,7 @@ def inflection_temp(frames,n_samples,n_rows,n_columns):
     flip_frames = flip_frame(frames)
     # Use the function 'edge_detection' to detect edges, fill and 
     # label the samples.
-    labeled_samples = edge_detection(flip_frames)
+    labeled_samples = edge_detection(flip_frames, n_samples)
     # Use the function 'regprop' to determine centroids of all the samples
     regprops = regprop(labeled_samples,flip_frames,n_samples,n_rows,n_columns)
     # Use the function 'sample_temp' to obtain temperature of samples 

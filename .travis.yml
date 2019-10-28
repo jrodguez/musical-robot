@@ -18,6 +18,9 @@ script:
 #-tox
 - coverage report
 
+git:
+  lfs_skip_smudge: true
+
 after_success:
 - ls -a
 - coveralls
